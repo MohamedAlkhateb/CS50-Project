@@ -149,7 +149,12 @@ def donate():
         return redirect("/home")
     else:
         return render_template("donate.html")
-
+@app.route("/requestBlood", methods=["GET", "POST"])
+def requestBlood():
+    if request.method == "POST":
+        return redirect("/home")
+    else:
+        return render_template("request.html")
 
 def errorhandler(e):
     """Handle error"""
