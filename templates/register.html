@@ -1,0 +1,76 @@
+{% extends "layout.html" %}
+{% block title %}
+    Register
+{% endblock %}
+{% block main %}
+    <form action="/register" method="post" id="my_form">
+        <div class="form-group">
+            <input autocomplete="off" autofocus class="form-control" name="username" placeholder="Username" type="text" id="user">
+        </div>
+        <div class="form-group">
+            <input class="form-control" name="password" placeholder="Password" type="password">
+        </div>
+         <div class="form-group">
+            <input class="form-control" name="confirmation" placeholder="Password (again)" type="password">
+        </div>
+        <div class="form-group">
+            <input autocomplete="off" autofocus class="form-control" name="name" placeholder="Name" type="text" id="user">
+        </div>
+        <div class="form-group row" id="phone">
+          <label for="example-email-input" class="col-2 col-form-label"></label>
+          <div class="col-10">
+            <input class="form-control" type="email" name="email" placeholder="*****@example.com" id="example-email-input">
+          </div>
+        </div>
+        <div class="form-group row" id="phone">
+          <label for="example-tel-input" class="col-2 col-form-label"></label>
+          <div class="col-10">
+            <input class="form-control" type="tel" value="+20" id="example-tel-input" name="phone">
+          </div>
+        </div>
+        <select class="form-control" name="BloodType">
+            <option disabled selected value>BloodType</option>
+            <option value="A+" name="A+">A+</option>
+            <option value="o+" name="O+">O+</option>
+            <option value="B+" name="B+">B+</option>
+            <option value="AB+"name="AB+">AB+</option>
+            <option value="A-" name="A-">A-</option>
+            <option value="O-" name="O-">O-</option>
+            <option value="B-" name="B-">B-</option>
+            <option value="AB-" name="AB-">AB-</option>
+        </select>
+        <select class="form-control" name="country">
+            <option disabled selected value>Country</option>
+            <option value="cairo" name="cairo">Cairo</option>
+            <option value="alex" name="alex">Alex</option>
+            <option value="giza" name="giza">Giza</option>
+            <option value="port Said" name="port Said">Port Said</option>
+            <option value="suez" name="suez">Suez</option>
+            <option value="luxor" name="luxor">Luxor</option>
+            <option value="mansoura" name="mansoura">Mansoura</option>
+            <option value="tanta" name="tanta">Tanta</option>
+        </select><br><br>
+        <button class="btn btn-primary" type="submit" id="submit" name="submit" value="submit">Log In</button>
+    </form>
+    <script>
+        document.querySelector('form').onsubmit = function() {
+
+            $.get('/check?username=' + document.querySelector('input').value, function(data)
+            {
+                if (data == "false")
+                {
+                    document.getElementById('my_form').addEventListener("submit",
+                    function(event){
+                        event.preventDefault();
+                    });
+                    return false;
+                }
+                else
+                {
+                    document.getElementById("my_form").submit();
+                    return true;
+                }
+            });
+        };
+    </script>
+{% endblock %}

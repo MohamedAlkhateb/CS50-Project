@@ -1,0 +1,13 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    DonateBlood
+{% endblock %}
+
+{% block main %}
+    <form action="/donate" method="post">
+        <h3>Are You Want to Donate Your Blood</h3>
+        <img class="yes" src="../static/images/yes.jpg" alt="yes" style="width:20%"><br><br>
+        <button type="submit" class="btn btn-success">yes</button>
+    </form>
+{% endblock %}
