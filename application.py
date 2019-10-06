@@ -152,19 +152,18 @@ def requestBlood():
     if request.method == "POST":
         BloodType = request.form.get("BloodType")
         country = request.form.get("country")
-        donor = db.execute(f"SELECT * FROM donor WHERE type='{BloodType}' AND country='{country}'")
+        donors = db.execute(f"SELECT * FROM donor WHERE type='{BloodType}' AND country='{country}'")
         user = db.execute(f"SELECT * FROM users WHERE id = {session['user_id']}")
         i = 0
-        while (donor[i]):
-            if user[0]["name"] == donor[i]["name"]:
-                del donor[i]
+        while (donors[i]):
+            if user[0]["name"] == donors[i]["name"]:
+                del donors[i]
             i += 1
             try:
-                donor[i+1]
+                donors[i+1]
             except IndexError:
                 break
-        print(donor)
-        return render_template("donors.html")
+        return render_template("donors.html", donors=donors)
     else:
         return render_template("request.html")
 
