@@ -71,3 +71,21 @@ main img
     position : relative;
     right : 89px;
 }
+#check-box
+{
+    top : 15px;
+    position : relative;
+    right : 64px;
+}
+.main
+{
+    position :relative;
+    z-index : 600;
+}
+.giveBlood
+{
+    margin : 0px;
+    height : 70px;
+    width: 1500px;
+    background-repeat : no-repeat;
+}

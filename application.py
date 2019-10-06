@@ -53,6 +53,8 @@ def check():
         return "true"
 
 @app.route("/")
+def homePage():
+    return render_template("HomePage.html")
 @app.route("/login", methods=["GET", "POST"])
 def login():
     """Log user in"""
@@ -69,11 +71,9 @@ def login():
         # Ensure password was submitted
         elif not request.form.get("password"):
             return apology("must provide password", 403)
-
         # Query database for username
         rows = db.execute("SELECT * FROM users WHERE username = :username",
                           username=request.form.get("username"))
-
         # Ensure username exists and password is correct
         if len(rows) != 1 or not check_password_hash(rows[0]["hash"], request.form.get("password")):
             return apology("invalid username and/or password", 403)
@@ -82,7 +82,7 @@ def login():
         session["user_id"] = rows[0]["id"]
 
         # Redirect user to home page
-        return redirect("/home")
+        return redirect("/account")
 
     # User reached route via GET (as by clicking a link or via redirect)
     else:
@@ -127,34 +127,68 @@ def register():
                                username=request.form.get("username"))
         if user_name:
             return apology("taken", 400)
-        db.execute("INSERT INTO users(username,hash,email,name,phone,country,type) VALUES(:username, :hash, :email, :name, :phone, :country, :type)", username=request.form.get("username"), hash=hash,
+        db.execute("INSERT INTO users(username,hash,email,name,phone,country,type,donor) VALUES(:username, :hash, :email, :name, :phone, :country, :type, 'Yes')", username=request.form.get("username"), hash=hash,
                     email=request.form.get("email"), name=request.form.get("name"), phone=request.form.get("phone"), country=request.form.get("country"), type=request.form.get("BloodType"))
         rows = db.execute("SELECT * FROM users WHERE username = :username",
                           username=request.form.get("username"))
         session["user_id"] = rows[0]["id"]
-        return redirect("/home")
+        if request.form.get("donate") == 'on':
+            user = db.execute(f"SELECT * FROM users WHERE id = {session['user_id']}")
+            db.execute("INSERT INTO donor(name,email,phone,country,type) VALUES(:name, :email, :phone, :country, :type)",
+                    name=user[0]["name"], email=user[0]["email"], phone=user[0]["phone"], country=user[0]["country"], type=user[0]["type"])
+        return redirect("/account")
     else:
         return render_template("register.html")
 
-@app.route("/home", methods=["GET", "POST"])
-def home():
-    user = db.execute(f"SELECT * FROM users WHERE id = {session['user_id']}")
-    return render_template("home.html", user=user)
-@app.route("/donate", methods=["GET", "POST"])
-def donate():
+@app.route("/account", methods=["GET", "POST"])
+def account():
     if request.method == "POST":
-        user = db.execute(f"SELECT * FROM users WHERE id = {session['user_id']}")
-        db.execute("INSERT INTO donor(name,email,phone,country,type) VALUES(:name, :email, :phone, :country, :type)",
-                    name=user[0]["name"], email=user[0]["email"], phone=user[0]["phone"], country=user[0]["country"], type=user[0]["type"])
-        return redirect("/home")
+        return redirect("/edit")
     else:
-        return render_template("donate.html")
+        user = db.execute(f"SELECT * FROM users WHERE id = {session['user_id']}")
+        return render_template("account.html", user=user)
 @app.route("/requestBlood", methods=["GET", "POST"])
 def requestBlood():
     if request.method == "POST":
-        return redirect("/home")
+        BloodType = request.form.get("BloodType")
+        country = request.form.get("country")
+        donor = db.execute(f"SELECT * FROM donor WHERE type='{BloodType}' AND country='{country}'")
+        user = db.execute(f"SELECT * FROM users WHERE id = {session['user_id']}")
+        i = 0
+        while (donor[i]):
+            if user[0]["name"] == donor[i]["name"]:
+                del donor[i]
+            i += 1
+            try:
+                donor[i+1]
+            except IndexError:
+                break
+        print(donor)
+        return render_template("donors.html")
     else:
         return render_template("request.html")
+
+@app.route("/edit", methods=["GET", "POST"])
+def edit():
+    if request.method == "POST":
+        email = request.form.get("email")
+        phone = request.form.get("phone")
+        user = db.execute(f"SELECT * FROM users WHERE id = {session['user_id']}")
+        name = user[0]['name']
+        print(request.form.get("donate"))
+        if request.form.get("donate") == 'on':
+            db.execute(f"UPDATE users SET donor = 'Yes' WHERE id = {session['user_id']}")
+            if not  (db.execute(f"SELECT * FROM donor WHERE name = '{name}'")):
+                db.execute("INSERT INTO donor(name,email,phone,country,type) VALUES(:name, :email, :phone, :country, :type)",
+                    name=user[0]["name"], email=user[0]["email"], phone=user[0]["phone"], country=user[0]["country"], type=user[0]["type"])
+        else:
+            db.execute("UPDATE users SET donor = 'No'")
+            db.execute(f"DELETE FROM donor WHERE name = '{name}'")
+        db.execute(f"UPDATE users SET email = '{email}', phone = '{phone}' WHERE id = {session['user_id']}")
+        return redirect("/account")
+    else:
+        user = db.execute(f"SELECT * FROM users WHERE id = {session['user_id']}")
+        return render_template("edit.html", user=user)
 
 def errorhandler(e):
     """Handle error"""

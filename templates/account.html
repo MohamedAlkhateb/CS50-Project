@@ -1,19 +1,21 @@
 {% extends "layout.html" %}
 
 {% block title %}
-    Home
+    EditProfile
 {% endblock %}
 
 {% block main %}
-    <form action="/home" method="post">
+    <form action="/account" method="post">
         <div class="card">
             <img src="../static/images/1.jpg" alt="Avatar" style="width:100%">
             <div class="container">
                 <h4>Name: {{ user[0]["name"] }}</h4>
                 email: {{ user[0]["email"] }}<br>
                 phone: {{ user[0]["phone"] }}<br>
-                BloodType: {{ user[0]["type"] }}
+                BloodType: {{ user[0]["type"] }}<br>
+                Donor: {{ user[0]["donor"] }}
             </div>
+            <button type="submit" class="btn btn-primary">Edit</button>
         </div>
     </form>
 {% endblock %}

@@ -7,5 +7,28 @@
 {% block main %}
     <form action="/requestBlood" method="post">
         <h2>Search for blood donor</h2>
+        <select class="browser-default custom-select" name="country">
+            <option disabled selected value>Country</option>
+            <option value="cairo" name="cairo">Cairo</option>
+            <option value="alex" name="alex">Alex</option>
+            <option value="giza" name="giza">Giza</option>
+            <option value="port Said" name="port Said">Port Said</option>
+            <option value="suez" name="suez">Suez</option>
+            <option value="luxor" name="luxor">Luxor</option>
+            <option value="mansoura" name="mansoura">Mansoura</option>
+            <option value="tanta" name="tanta">Tanta</option>
+        </select><br><br>
+        <select class="browser-default custom-select" name="BloodType">
+            <option disabled selected value>BloodType</option>
+            <option value="A+" name="A+">A+</option>
+            <option value="o+" name="O+">O+</option>
+            <option value="B+" name="B+">B+</option>
+            <option value="AB+"name="AB+">AB+</option>
+            <option value="A-" name="A-">A-</option>
+            <option value="O-" name="O-">O-</option>
+            <option value="B-" name="B-">B-</option>
+            <option value="AB-" name="AB-">AB-</option>
+        </select><br><br>
+        <button class="btn btn-primary" type="submit" id="submit" name="submit" value="submit">Submit</button>
     </form>
 {% endblock %}
